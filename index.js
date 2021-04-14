@@ -23,8 +23,8 @@ const promptUser = () => {
             type: 'input',
             name: 'description',
             message: 'Provide a description of the project (Required)',
-            validate: nameInput => {
-                if (nameInput) {
+            validate: descriptionInput => {
+                if (descriptionInput) {
                     return true;
                 } else {
                     console.log('Please enter your project description!');
@@ -32,13 +32,89 @@ const promptUser = () => {
                 }
             }
         },
+        {
+            type: 'confirm',
+            name: 'confirmContribution',
+            message: 'Would you like to add contribution guidelines to your readme?',
+            default: true
+        },
+        {
+            type: 'input',
+            name: 'contributions',
+            message: 'Please provide guidelines on how to contribute to your project',
+            when: ({ confirmContribution }) => confirmContribution
+        },
+        {
+            type: 'input',
+            name: 'githubName',
+            message: 'Please provide your GitHub username',
+            validate: githubNameInput => {
+                if (githubNameInput) {
+                    return true;
+                } else {
+                    console.log('Please enter the name to your GitHub account!');
+                    return false;
+                }
+            }
+        },
+        {
+            type: 'input',
+            name: 'githubLink',
+            message: 'Please provide a link to your github',
+            validate: githubLinkInput => {
+                if (githubLinkInput) {
+                    return true;
+                } else {
+                    console.log('Please enter the link to your GitHub account!');
+                    return false;
+                }
+            }
+        },
+        {
+            type: 'input',
+            name: 'emailAddress',
+            message: 'Please provide your email address',
+            validate: emailAddressInput => {
+                if (emailAddressInput) {
+                    return true;
+                } else {
+                    console.log('Please enter your email address!');
+                    return false;
+                }
+            }
+        },
+        {
+            type: 'confirm',
+            name: 'confirmAddContact',
+            message: 'Would you like to provide additional information about contacting you?',
+            default: false
+        },
+        {
+            type: 'input',
+            name: 'contactInfo',
+            message: 'Provide additional contact steps',
+            when: ({ confirmAddContact }) => confirmAddContact
+        },
+        {
+            type: 'confirm',
+            name: 'confrimAddTests',
+            message: 'Would you like to add a test section to the readme? If yes, please paste your code into the markup once it is generated.',
+            default: false
+        },
+        {
+            type: 'list',
+            name: 'licenses',
+            message: 'Please select which license you would like to use for your readme',
+            choices: ['Apache License 2.0', 'MIT', 'GNU GPLv3']
+        }
     ])
-}
+};
+
 const installationStepInput = userData => {
     if (!userData.installationSteps) {
         userData.installationSteps = [];
     }
-    console.log('INSTALLATION STEPS');
+    console.log('*****INSTALLATION STEPS*****');
     return inquirer.prompt([
         {
             type: 'input',
@@ -67,7 +143,54 @@ const installationStepInput = userData => {
             return userData;
         }
     })
-}
+};
+
+const usageInput = userData => {
+    console.log('*****USAGE*****');
+    if (!userData.usage) {
+        userData.usage = [];
+    }
+    return inquirer.prompt([
+        {
+            type: 'input',
+            name: 'usage',
+            message: 'Provide instructions and examples for use, or a caption for your screenshot (Required)',
+            validate: usageInput => {
+                if (usageInput) {
+                    return true;
+                } else {
+                    console.log('Please enter a brief usage description');
+                    return false;
+                }
+            }
+        },
+        {
+            type: 'confirm',
+            name: 'confirmAddImg',
+            message: 'Would you like to add a screenshot for the usage section?',
+            default: false
+        },
+        {
+            type: 'input',
+            name: 'usageImg',
+            message: `Please create an "assets/images" folder in your repository 
+                and upload your image to it. Then provide the filepath.`,
+            when: ({ confirmAddImg }) => confirmAddImg
+        },
+        {
+            type: 'confirm',
+            name: 'confirmNewUsage',
+            message: 'Would you like to add more usage examples?',
+            default: false
+        }
+    ]).then(usageData => {
+        userData.usage.push(usageData);
+        if (usageData.confirmNewUsage) {
+            return usageInput(userData);
+        } else return userData;
+    })
+};
+
 
 // TODO: Create a function to write README file
 const writeFile = fileContent => {
@@ -88,9 +211,7 @@ const writeFile = fileContent => {
 // Function to generate the file
 promptUser()
     .then(installationStepInput)
-    // .then(userData => {
-    //     console.log(userData);
-    // })
+    .then(usageInput)
     .then(userData => {
         return generateMarkdown(userData);
     })
