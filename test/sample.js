@@ -9,7 +9,7 @@ module.exports = {
     confirmAddContact: true,
     contactInfo: 'Insert contact info here',
     confirmAddTests: true,
-    licenses: 'Apache License 2.0',
+    licenses: 'Apache',
     installationSteps: [ 
         { installationSteps: 'Sample Step 1', confirmAddStep: true },
         { installationSteps: 'sample step 2', confirmAddStep: false }

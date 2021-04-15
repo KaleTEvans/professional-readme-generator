@@ -39,8 +39,7 @@ const generateExtraContent = contData => {
   ${contData.contributions}
     
   ## Tests
-  Provide your sample tests here.
-    `;
+  Provide your sample tests here.`;
   } else return '';
 }
 
@@ -58,6 +57,13 @@ const generateTOC = data => {
   } else return '';
 }
 
+// license section for TOC
+const licenceTOC = data => {
+  if (data.licenses != 'No License') {
+    return `* [License](#license)`;
+  } else return '';
+}
+
 // if contact info was added
 const generateContact = data => {
   if (data.contactInfo) {
@@ -67,15 +73,30 @@ const generateContact = data => {
 
 // TODO: Create a function that returns a license badge based on which license is passed in
 // If there is no license, return an empty string
-function renderLicenseBadge(license) {}
+const renderLicenseBadge = license => {
+  if (license.licenses != 'No License'){
+    return `![license](https://img.shields.io/badge/license-${license.licenses}-green)`
+  } 
+  return ``
+}
 
 // TODO: Create a function that returns the license link
 // If there is no license, return an empty string
-function renderLicenseLink(license) {}
-
-// TODO: Create a function that returns the license section of README
-// If there is no license, return an empty string
-function renderLicenseSection(license) {}
+const renderLicenseLink = license => {
+  if (license.licenses === 'Apache') {
+    return `## License
+  This Software is licensed under the Apache License, Version 2.0. For further information and text regarding this license, visit [Apache License](http://www.apache.org/licenses/LICENSE-2.0)`;
+  }
+  if (license.licenses === 'MIT') {
+    return `## License 
+  This Software is licensed under the MIT License. For further information and text regarding this license, visit [MIT License](https://opensource.org/licenses/MIT)`;
+  }
+  if (license.licenses === 'GNU') {
+    return `## License
+  This Software is licensed under the GNU General Public License v3.0. For further information and text regarding this license, visit [GNU License](https://spdx.org/licenses/GPL-3.0-or-later.html)`;
+  }
+  else {return '';}
+}
 
 // TODO: Create a function to generate markdown for README
 const generateMarkdown = data => {
@@ -83,12 +104,14 @@ const generateMarkdown = data => {
   return `
   # ${data.name}
 
+  ${renderLicenseBadge(data)}
+
   ## Table of Contents
   * [Description](#description)
   * [Installation](#installation)
   * [Usage](#usage)
   ${generateTOC(data)}
-  * [License](#license)
+  ${licenceTOC(data)}
 
   ## Description
   ${data.description}
@@ -104,10 +127,10 @@ const generateMarkdown = data => {
   ## Contact
   * Github: [${data.githubName}](${data.githubLink})
   * Email: ${data.emailAddress}
-  ${generateContact(data)}
+  * ${generateContact(data)}
 
-  ## License
-  
+  ${renderLicenseLink(data)}
+
 `;
 }
 

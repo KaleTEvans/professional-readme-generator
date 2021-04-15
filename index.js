@@ -105,7 +105,7 @@ const promptUser = () => {
             type: 'list',
             name: 'licenses',
             message: 'Please select which license you would like to use for your readme',
-            choices: ['Apache License 2.0', 'MIT', 'GNU GPLv3']
+            choices: ['Apache', 'MIT', 'GNU', 'No License']
         }
     ])
 };
